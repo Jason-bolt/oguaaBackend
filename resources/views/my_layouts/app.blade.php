@@ -6,17 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NUBS UCC</title>
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-        crossorigin="anonymous"
-    />
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"
-    ></script>
+    <link rel="stylesheet" href="{{ asset('bootstrap-5.0.0/dist/css/bootstrap.css') }}">
+    <script src="{{ asset(('bootstrap-5.0.0/dist/js/bootstrap.js')) }}"></script>
+
     <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css"
@@ -24,6 +16,23 @@
         crossorigin="anonymous"
     />
     <link rel="icon" href={{ asset('oguaa-logo.jpg') }} />
+
+    <style type="text/css">
+        .image-upload {
+            height: 120px;
+            width: 120px;
+            text-align: center;
+            margin: auto;
+            display: block;
+            margin-top: 20px;
+        }
+
+        .card-img-top {
+            height: 100%;
+            width: 100%;
+            border-radius: 100%;
+        }
+    </style>
 </head>
 <body>
 <header class="header">
@@ -55,7 +64,7 @@
                         <a href="{{ route('occupants') }}" class="nav-link {{ $page == 'occupants' ? 'active' : '' }}">Residents</a>
                     </li>
                     <li class="nav-item">
-                        <a href="data_collection.html" class="nav-link"
+                        <a href="{{ route('data_collection') }}" class="nav-link {{ $page == 'data' ? 'active' : '' }}"
                         >Data Collection</a
                         >
                     </li>
