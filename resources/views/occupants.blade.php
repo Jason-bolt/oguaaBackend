@@ -33,7 +33,11 @@
     <section class="px-sm-5 py-sm-3 mb-5">
         <div class="container">
             <!-- Number of Occupants -->
-            <p class="lead fs-3 py-2">Number of occupants: {{ $occupant_count }}</p>
+            @if(!isset($search))
+                <p class="lead fs-3 py-2">Number of occupants: {{ $occupant_count }}</p>
+            @else
+                <p class="lead fs-3 py-2">Search result</p>
+            @endif
             <!-- Loop -->
             <div class="row g-4">
                 @forelse($occupants as $occupant)

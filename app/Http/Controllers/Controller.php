@@ -65,4 +65,23 @@ class Controller extends BaseController
 
         return back()->with('success', 'Occupant added successfully');
     }
+
+//    Search can be done by room number, index number or last name
+    public function search(Request $request){
+//        dd($request);
+        $query = $request->search_query;
+        $page = 'occupants';
+        $occupants = Occupants::where('last_name', 'LIKE', '%' . $query . '%')
+            ->orWhere('room_number', 'LIKE', '%' . $query . '%')
+            ->orWhere('index_number', 'LIKE', '%' . $query . '%')
+            ->get();
+        $occupant_count = count($occupants);
+
+        return view('occupants')->with([
+            'page' => $page,
+            'occupants' => $occupants,
+            'occupant_count' => $occupant_count,
+            'search' => '1'
+        ]);
+    }
 }
