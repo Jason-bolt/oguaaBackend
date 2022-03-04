@@ -14,6 +14,9 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+     */
     public function index(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
     {
         $page = 'occupants';
@@ -26,6 +29,9 @@ class Controller extends BaseController
         ]);
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+     */
     public function data_collection(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
     {
         $page = 'data';
@@ -34,6 +40,10 @@ class Controller extends BaseController
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function add_occupant(Request $request) {
 //        dd($request);
         $request->validate([
@@ -66,8 +76,13 @@ class Controller extends BaseController
         return back()->with('success', 'Occupant added successfully');
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+     */
 //    Search can be done by room number, index number or last name
-    public function search(Request $request){
+    public function search(Request $request)
+    {
 //        dd($request);
         $query = $request->search_query;
         $page = 'occupants';
@@ -83,5 +98,64 @@ class Controller extends BaseController
             'occupant_count' => $occupant_count,
             'search' => '1'
         ]);
+    }
+
+    /**
+     * @param $id
+     * @param $room_number
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     *
+     * Key Returned to the porter's lodge
+     *
+     * Key_status = 1 => Key has been taken
+     * Key_status = 0 => Key is in the porter's lodge
+     *
+     */
+    public function key_in($id, $room_number){
+
+//        Validate id and room number
+        $id_valid = Occupants::where('id', $id)->get();
+        $room_number_valid = Occupants::where('room_number', $room_number)->get();
+
+        if ($id_valid && $room_number_valid)
+        {
+//            Change key status of all roommates to 1
+            Occupants::where('room_number', $room_number)
+                ->update([
+                    'key_status' => 0
+                ]);
+            Occupants::where('id', $id)
+                ->update([
+                   'hasKey' => 0
+                ]);
+            return back();
+        }else{
+            return redirect('/');
+        }
+
+    }
+
+    public function key_out($id, $room_number){
+
+//        Validate id and room number
+        $id_valid = Occupants::where('id', $id)->get();
+        $room_number_valid = Occupants::where('room_number', $room_number)->get();
+
+        if ($id_valid && $room_number_valid)
+        {
+//            Change key status of all roommates to 1
+            Occupants::where('room_number', $room_number)
+                ->update([
+                    'key_status' => 1
+                ]);
+            Occupants::where('id', $id)
+                ->update([
+                   'hasKey' => 1
+                ]);
+            return back();
+        }else{
+            return redirect('/');
+        }
+
     }
 }

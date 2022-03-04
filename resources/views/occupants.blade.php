@@ -60,8 +60,8 @@
                                 <p class="m-0 small"><em>{{ $occupant->program }}</em></p>
                                 <p class="m-0 small"><strong>Key status</strong></p>
                                 <p class="m-0 small btn-group">
-                                    <a href="#" class="btn btn-sm btn-secondary">IN</a>
-                                    <a href="#" class="btn btn-sm btn-outline-secondary">OUT</a>
+                                    <a href="/key_in/{{ $occupant->id }}/{{ $occupant->room_number }}" class="btn btn-sm {{ $occupant->key_status == true ? 'btn-outline-secondary' : 'btn-secondary' }} ">IN</a>
+                                    <a href="/key_out/{{ $occupant->id }}/{{ $occupant->room_number }}" class="btn btn-sm {{ $occupant->key_status == true ? 'btn-secondary' : 'btn-outline-secondary' }}">OUT</a>
                                 </p>
                                 @if($occupant->hasKey)
                                     <div
@@ -76,9 +76,15 @@
                     </div>
 
                 @empty
-                    <p class="display-1 py-5">
-                        No Occupant Added
-                    </p>
+                    @if(!isset($search))
+                        <p class="display-1 py-5">
+                            No Occupant Added
+                        </p>
+                    @else
+                        <p class="display-3 py-5">
+                            No occupant for the search query
+                        </p>
+                    @endif
                 @endforelse
 
             </div>

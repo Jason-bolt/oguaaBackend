@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('index_number')->unique();
             $table->string('room_number');
             $table->string('image');
+            $table->string('key_status')->nullable();
             $table->boolean('hasKey')->nullable();
             $table->timestamps();
         });

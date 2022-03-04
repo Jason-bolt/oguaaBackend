@@ -22,5 +22,7 @@ Route::get('/occupants', [Controller::class, 'index'])->middleware(['auth'])->na
 Route::get('/data_collection', [Controller::class, 'data_collection'])->middleware(['auth'])->name('data_collection');
 Route::post('/data_collection', [Controller::class, 'add_occupant'])->middleware(['auth'])->name('add_occupant');
 Route::post('/search', [Controller::class, 'search'])->middleware(['auth'])->name('search');
+Route::get('/key_in/{id}/{room_number}', [Controller::class, 'key_in'])->middleware(['auth']);
+Route::get('/key_out/{id}/{room_number}', [Controller::class, 'key_out'])->middleware(['auth']);
 
 require __DIR__.'/auth.php';
