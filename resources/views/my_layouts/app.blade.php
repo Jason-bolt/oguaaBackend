@@ -69,7 +69,7 @@
                         >
                     </li>
                     <li class="nav-item">
-                        <a href="users.html" class="nav-link">Users</a>
+                        <a href="{{ route('users') }}" class="nav-link {{ $page == 'users' ? 'active' : '' }}">Users</a>
                     </li>
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST">

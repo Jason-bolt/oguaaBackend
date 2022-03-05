@@ -41,6 +41,17 @@ class Controller extends BaseController
     }
 
     /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function users()
+    {
+        $page = 'users';
+        return view('users')->with([
+           'page' => $page
+        ]);
+    }
+
+    /**
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -113,6 +124,12 @@ class Controller extends BaseController
      */
     public function key_in($id, $room_number){
 
+        $contacts = Occupants::where([
+            ['room_number', $room_number],
+            ['id', '!=', $id]
+        ])->get('contact');
+
+
 //        Validate id and room number
         $id_valid = Occupants::where('id', $id)->get();
         $room_number_valid = Occupants::where('room_number', $room_number)->get();
@@ -124,7 +141,7 @@ class Controller extends BaseController
                 ->update([
                     'key_status' => 0
                 ]);
-            Occupants::where('id', $id)
+            Occupants::where('room_number', $room_number)
                 ->update([
                    'hasKey' => 0
                 ]);
@@ -135,7 +152,17 @@ class Controller extends BaseController
 
     }
 
+    /**
+     * @param $id
+     * @param $room_number
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function key_out($id, $room_number){
+
+        $room_mate_numbers = Occupants::where([
+            ['room_number', $room_number],
+            ['id', '!=', $id]
+        ])->get('contact');
 
 //        Validate id and room number
         $id_valid = Occupants::where('id', $id)->get();
