@@ -56,13 +56,15 @@ class Controller extends BaseController
      * @return \Illuminate\Http\RedirectResponse
      */
     public function add_occupant(Request $request) {
+
+
 //        dd($request);
         $request->validate([
             'image' => ['required', 'mimes:jpg,png,jpeg,gif', 'max:5048'],
             'first_name' => ['required', 'string'],
             'other_name' => ['required', 'string'],
             'last_name' => ['required', 'string'],
-            'contact' => ['required', 'numeric'],
+            'contact' => ['required', 'string'],
             'program' => ['required', 'string'],
             'level' => ['required', 'string'],
             'index_number' => ['required', 'string', 'unique:occupants'],
