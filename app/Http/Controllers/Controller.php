@@ -94,8 +94,6 @@ class Controller extends BaseController
      */
     public function add_occupant(Request $request) {
 
-
-//        dd($request);
         $request->validate([
             'image' => ['required', 'mimes:jpg,png,jpeg,gif', 'max:5048'],
             'first_name' => ['required', 'string'],
@@ -122,6 +120,65 @@ class Controller extends BaseController
             'room_number' => $request->room_number,
             'image' => $occupant_image
         ]);
+
+        return back()->with('success', 'Occupant added successfully');
+    }
+
+    public function edit_occupant(Request $request, $id)
+    {
+        if ($request->image == null)
+        {
+            $request->validate([
+                'first_name' => ['required', 'string'],
+                'other_name' => ['required', 'string'],
+                'last_name' => ['required', 'string'],
+                'contact' => ['required', 'string'],
+                'program' => ['required', 'string'],
+                'level' => ['required', 'string'],
+                'index_number' => ['required', 'string'],
+                'room_number' => ['required', 'string'],
+            ]);
+
+            Occupants::where('id', $id)
+            ->update([
+                'first_name' => $request->first_name,
+                'other_name' => $request->other_name,
+                'last_name' => $request->last_name,
+                'contact' => $request->contact,
+                'program' => $request->program,
+                'level' => $request->level,
+                'index_number' => $request->index_number,
+                'room_number' => $request->room_number,
+            ]);
+        }else{
+            $request->validate([
+                'image' => ['required', 'mimes:jpg,png,jpeg,gif', 'max:5048'],
+                'first_name' => ['required', 'string'],
+                'other_name' => ['required', 'string'],
+                'last_name' => ['required', 'string'],
+                'contact' => ['required', 'string'],
+                'program' => ['required', 'string'],
+                'level' => ['required', 'string'],
+                'index_number' => ['required', 'string'],
+                'room_number' => ['required', 'string'],
+            ]);
+
+            $occupant_image = time() . '_' . $request->last_name . '.' . $request->image->extension();
+            $request->image->move(public_path('occupants_image'), $occupant_image);
+
+            Occupants::where('id', $id)
+            ->update([
+                'first_name' => $request->first_name,
+                'other_name' => $request->other_name,
+                'last_name' => $request->last_name,
+                'contact' => $request->contact,
+                'program' => $request->program,
+                'level' => $request->level,
+                'index_number' => $request->index_number,
+                'room_number' => $request->room_number,
+                'image' => $occupant_image
+            ]);
+        }
 
         return back()->with('success', 'Occupant added successfully');
     }

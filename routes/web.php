@@ -21,6 +21,7 @@ Route::get('/', function () {
 Route::get('/occupants', [Controller::class, 'index'])->middleware(['auth'])->name('occupants');
 Route::get('/data_collection', [Controller::class, 'data_collection'])->middleware(['auth'])->name('data_collection');
 Route::post('/data_collection', [Controller::class, 'add_occupant'])->middleware(['auth'])->name('add_occupant');
+Route::put('/occupant/edit/{id}', [Controller::class, 'edit_occupant'])->middleware(['auth']);
 Route::get('/users', [Controller::class, 'users'])->middleware(['auth'])->name('users');
 Route::get('/user/delete/{id}', [Controller::class, 'delete_user'])->middleware(['auth']);
 Route::post('/user/create', [Controller::class, 'create_user'])->middleware(['auth'])->name('create_user');
