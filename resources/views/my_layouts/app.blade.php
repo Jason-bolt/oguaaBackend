@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OGUAA HALL</title>
 
-    <link rel="stylesheet" href="{{ asset('bootstrap-5.0.0/dist/css/bootstrap.css') }}">
-    <script src="{{ asset(('bootstrap-5.0.0/dist/js/bootstrap.js')) }}"></script>
+    <link rel="stylesheet" href="{{ asset('bootstrap-5.0.2-dist/css/bootstrap.css') }}">
+    <script src="{{ asset(('bootstrap-5.0.2-dist/js/bootstrap.js')) }}"></script>
 
     <link
         rel="stylesheet"

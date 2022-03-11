@@ -22,6 +22,8 @@ Route::get('/occupants', [Controller::class, 'index'])->middleware(['auth'])->na
 Route::get('/data_collection', [Controller::class, 'data_collection'])->middleware(['auth'])->name('data_collection');
 Route::post('/data_collection', [Controller::class, 'add_occupant'])->middleware(['auth'])->name('add_occupant');
 Route::get('/users', [Controller::class, 'users'])->middleware(['auth'])->name('users');
+Route::get('/user/delete/{id}', [Controller::class, 'delete_user'])->middleware(['auth']);
+Route::post('/user/create', [Controller::class, 'create_user'])->middleware(['auth'])->name('create_user');
 Route::post('/search', [Controller::class, 'search'])->middleware(['auth'])->name('search');
 Route::get('/key_in/{id}/{room_number}', [Controller::class, 'key_in'])->middleware(['auth']);
 Route::get('/key_out/{id}/{room_number}', [Controller::class, 'key_out'])->middleware(['auth']);

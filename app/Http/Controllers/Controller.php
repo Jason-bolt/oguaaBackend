@@ -9,6 +9,8 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
 
 class Controller extends BaseController
 {
@@ -45,11 +47,46 @@ class Controller extends BaseController
      */
     public function users()
     {
+        $users = User::where('is_admin')->get(); // is null
         $page = 'users';
         return view('users')->with([
-           'page' => $page
+           'page' => $page,
+            'users' => $users
         ]);
     }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function create_user(Request $request)
+    {
+//        dd($request);
+        $request->validate([
+            'username' => ['string', 'max:20'],
+            'password' => ['string', Rules\Password::defaults()]
+        ]);
+
+        User::create([
+            'username' => $request->username,
+            'password' => Hash::make($request->password),
+        ]);
+
+//        User::create([
+//            'username' => $request->username,
+//            'password' => Hash::make($request->password)
+//        ]);
+
+        return back();
+    }
+
+    public function delete_user($id)
+    {
+        User::where('id', $id)->firstOrFail();
+        User::where('id', $id)->delete();
+        return back();
+    }
+
 
     /**
      * @param Request $request

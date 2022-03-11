@@ -1,6 +1,21 @@
 @extends('my_layouts.app')
 
 @section('content')
+    @if ($errors->any())
+        <div class="alert alert-danger" role="alert">
+            <div class="p-2">
+                <div class="font-medium text-red-600">
+                    Whoops! Something went wrong.
+                </div>
+
+                <ul class="mt-3 text-sm text-danger">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    @endif
     <!-- System Users -->
     <section class="px-sm-5 py-sm-5 mb-5">
         <div class="container">
@@ -8,60 +23,25 @@
             <table class="table table-stripped">
                 <thead>
                 <tr>
-                    <th scope="col">#</th>
                     <th scope="col">Username</th>
                     <th scope="col">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th>1</th>
-                    <td>Username</td>
-                    <td>
-                        <button
-                            class="btn btn-danger rounded-pill"
-                            data-bs-toggle="modal"
-                            data-bs-target="#deleteUser"
-                        >
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
+                @forelse($users as $user)
+                    <tr>
+                        <td>{{ $user->username }}</td>
+                        <td>
+                            <a href="user/delete/{{ $user->id }}" class="btn btn-danger rounded-pill" onclick="return confirm('User {{ $user->username }} will be deleted!')"><i class="bi bi-trash"></i></a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        No User added
+                    </tr>
+                @endforelse
                 </tbody>
             </table>
-
-            <!-- Modal -->
-            <div
-                class="modal fade"
-                id="deleteUser"
-                tabindex="-1"
-                aria-labelledby="exampleModalLabel"
-                aria-hidden="true"
-            >
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Delete User</h5>
-                            <button
-                                type="button"
-                                class="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"
-                            ></button>
-                        </div>
-                        <div class="modal-body text-center">
-                            <p class="lead">Delete User?</p>
-                            <form action="{{ route('delete_user') }}" method="POST">
-                                @csrf
-                                @method('delete')
-                                <button class="btn btn-danger" type="submit">
-                                    Delete <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
@@ -81,7 +61,8 @@
         <div class="collapse py-4" id="addUser">
             <div class="container col-6 text-start">
                 <h3>Add User</h3>
-                <form action="#">
+                <form action="{{ route('create_user') }}" method="POST">
+                    @csrf
                     <div class="form-group">
                         <label for="username">Username</label>
                         <input
@@ -89,13 +70,14 @@
                             type="text"
                             name="username"
                             id="username"
+                            value="{{ old('username') }}"
                         />
                     </div>
                     <div class="form-group mt-3">
                         <label for="password">Password</label>
                         <input
                             class="form-control"
-                            type="text"
+                            type="password"
                             name="password"
                             id="password"
                         />
