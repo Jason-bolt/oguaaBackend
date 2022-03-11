@@ -68,9 +68,11 @@
                         >Data Collection</a
                         >
                     </li>
-                    <li class="nav-item">
-                        <a href="{{ route('users') }}" class="nav-link {{ $page == 'users' ? 'active' : '' }}">Users</a>
-                    </li>
+                    @if (\Illuminate\Support\Facades\Auth::user()->is_admin)
+                        <li class="nav-item">
+                            <a href="{{ route('users') }}" class="nav-link {{ $page == 'users' ? 'active' : '' }}">Users</a>
+                        </li>
+                    @endif
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf

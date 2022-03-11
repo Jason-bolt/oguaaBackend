@@ -180,7 +180,7 @@ class Controller extends BaseController
             ]);
         }
 
-        return back()->with('success', 'Occupant added successfully');
+        return redirect('/');
     }
 
     /**
