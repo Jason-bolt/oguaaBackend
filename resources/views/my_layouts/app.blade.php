@@ -65,8 +65,7 @@
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('data_collection') }}" class="nav-link {{ $page == 'data' ? 'active' : '' }}"
-                        >Data Collection</a
-                        >
+                        >Data Collection</a>
                     </li>
                     @if (\Illuminate\Support\Facades\Auth::user()->is_admin)
                         <li class="nav-item">

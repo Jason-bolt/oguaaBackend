@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Intervention\Image\Facades\Image;
 
 class Controller extends BaseController
 {
@@ -95,7 +96,7 @@ class Controller extends BaseController
     public function add_occupant(Request $request) {
 
         $request->validate([
-            'image' => ['required', 'mimes:jpg,png,jpeg,gif', 'max:5048'],
+            'image' => ['required', 'mimes:jpg,png,jpeg,gif'],
             'first_name' => ['required', 'string'],
             'other_name' => ['required', 'string'],
             'last_name' => ['required', 'string'],
@@ -107,7 +108,33 @@ class Controller extends BaseController
         ]);
 
         $occupant_image = time() . '_' . $request->last_name . '.' . $request->image->extension();
-        $request->image->move(public_path('occupants_image'), $occupant_image);
+        $img = Image::make($request->image);
+        $img_size = $request->image->getSize();
+//        dd($img_size);
+        if ($img_size <= 5242880) // Below 5MB
+        {
+            $request->image->move(public_path('occupants_image'), $occupant_image);
+        }elseif ($img_size <= 10485760) // Below 10MB
+        {
+            $img->save(public_path('occupants_image/' . $occupant_image));
+        }elseif ($img_size <= 15728640) // Below 15MB
+        {
+            $img->save(public_path('occupants_image/' . $occupant_image), '80');
+        }elseif ($img_size <= 20971520) // Below 20MB
+        {
+            $img->save(public_path('occupants_image/' . $occupant_image), '70');
+        }elseif ($img_size <= 26214400) // Below 25MB
+        {
+            $img->save(public_path('occupants_image/' . $occupant_image), '60');
+        }elseif ($img_size <= 31457280) // Below 30MB
+        {
+            $img->save(public_path('occupants_image/' . $occupant_image), '50');
+        }else // Above 30MB
+        {
+            $img->save(public_path('occupants_image/' . $occupant_image), '30');
+        }
+//        $img->save(public_path('occupants_image/' . $occupant_image), '4');
+//        $request->image->move(public_path('occupants_image'), $occupant_image);
 
         Occupants::create([
             'first_name' => $request->first_name,
@@ -232,6 +259,20 @@ class Controller extends BaseController
 
         if ($id_valid && $room_number_valid)
         {
+            $room_mate_numbers = Occupants::where([
+                ['room_number', $room_number]
+            ])->get('contact');
+
+            $numbers_arr = $room_mate_numbers->toArray();
+
+            $num_arr = array();
+            foreach ($numbers_arr as $number)
+            {
+                $num_arr[] = $number['contact'];
+            }
+
+            $key_holder = Occupants::where('id', $id)->get()->toArray()[0];
+
 //            Change key status of all roommates to 1
             Occupants::where('room_number', $room_number)
                 ->update([
@@ -241,7 +282,31 @@ class Controller extends BaseController
                 ->update([
                    'hasKey' => 0
                 ]);
-            return back();
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, [
+                CURLOPT_URL => 'https://sms.arkesel.com/api/v2/sms/send',
+                CURLOPT_HTTPHEADER => ['api-key:aG1veXpRVXRUb0hhSFJ2ZkRJck8'],
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => http_build_query([
+                    'sender' => 'Oguaa Hall',
+//                    'message' => 'Key status:turned in by Nhana Qwahame',
+                    'message' => 'Key status: Turned in by ' . $key_holder['first_name'] . ' ' . $key_holder['other_name'] . ' ' . $key_holder['last_name'],
+                    'recipients' => $num_arr
+                ]),
+            ]);
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+            return redirect('/search?search_query=' . $room_number);
         }else{
             return redirect('/');
         }
@@ -254,18 +319,28 @@ class Controller extends BaseController
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function key_out($id, $room_number){
-
-        $room_mate_numbers = Occupants::where([
-            ['room_number', $room_number],
-            ['id', '!=', $id]
-        ])->get('contact');
-
 //        Validate id and room number
         $id_valid = Occupants::where('id', $id)->get();
         $room_number_valid = Occupants::where('room_number', $room_number)->get();
 
         if ($id_valid && $room_number_valid)
         {
+            $room_mate_numbers = Occupants::where([
+                ['room_number', $room_number]
+            ])->get('contact');
+
+            $numbers_arr = $room_mate_numbers->toArray();
+
+            $num_arr = array();
+            foreach ($numbers_arr as $number)
+            {
+                $num_arr[] = $number['contact'];
+            }
+
+            $key_holder = Occupants::where('id', $id)->get()->toArray()[0];
+
+//            dd($key_holder);
+
 //            Change key status of all roommates to 1
             Occupants::where('room_number', $room_number)
                 ->update([
@@ -275,7 +350,31 @@ class Controller extends BaseController
                 ->update([
                    'hasKey' => 1
                 ]);
-            return back();
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, [
+                CURLOPT_URL => 'https://sms.arkesel.com/api/v2/sms/send',
+                CURLOPT_HTTPHEADER => ['api-key:aG1veXpRVXRUb0hhSFJ2ZkRJck8'],
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => http_build_query([
+                    'sender' => 'Oguaa Hall',
+//                    'message' => 'Key status:turned in by Nhana Qwahame',
+                    'message' => 'Key status: Taken by ' . $key_holder['first_name'] . ' ' . $key_holder['other_name'] . ' ' . $key_holder['last_name'],
+                    'recipients' => $num_arr
+                ]),
+            ]);
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+            return redirect('/search?search_query=' . $room_number);
         }else{
             return redirect('/');
         }

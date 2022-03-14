@@ -4,8 +4,7 @@
     <!-- Search Bar -->
     <section class="px-sm-4 p-3">
         <div class="container text-center">
-            <form action="{{ route('search') }}" method="POST">
-                @csrf
+            <form action="{{ route('search') }}" method="GET">
                 <div class="row g-2 mt-2">
                     <div class="col-9 m-auto">
                         <div class="input-group">
